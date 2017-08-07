@@ -1,17 +1,12 @@
 'use strict';
 
-let Cell = function (_objects) {
+let Cell = function (_x, _y, polePosition) {
 
-    if (!_objects || !_.isArray(_objects)) {
-        throw new Error('initialization parameter must be an array of objects');
-    }
+    this.x = _x;
+    this.y = _y;
 
-    /**
-     * holds the list of objects to be filtered
-     *
-     * @type {array}
-     */
-    this.objects = _objects;
+    // determine opposite pole
+    // ... ///TODO
 
     /**
      * the polarity of the cell, can be:
