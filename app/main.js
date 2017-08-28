@@ -2,8 +2,6 @@
 
 let board = require('./board');
 
-console.log('yes');
-
 let exampleBoard = {
     dimX: 4,
     dimY: 4,

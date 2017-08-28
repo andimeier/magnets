@@ -16,6 +16,7 @@ let lines = {
 };
 let cells;
 let magnets;
+let nrOfMagnets;
 
 
 /**
@@ -105,6 +106,19 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
 
     // TODO set neighbors
     // cell.setNeighbors(neighbors);
+
+    /*
+     * find out magnets by looking at the "l" and "t" orientated cells (which must be
+     * one half of a magnet)
+     */
+    magnets = cells
+        .filter((cell) => 'tl'.includes(cell.getPosition()))
+        .map((cell) => [
+            cell,
+            cell.getOpposite()
+        ]);
+
+    nrOfMagnets = magnets.length;
 }
 
 
@@ -284,7 +298,14 @@ function solve() {
          * * opposite orientation
          * * no magnet on this position
          */
+        if (level === nrOfMagnets) {
+            // check solution
+            return isBoardSolved();
+        }
 
+        if (recurse(level + 1)) {
+            return true;
+        }
 
         return true;
     }

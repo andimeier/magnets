@@ -116,6 +116,16 @@ Cell.prototype = function() {
 
 
     /**
+     * returns opposite pole of a pole
+     *
+     * @return oppositePose {object} the cell object representing the opposite pole
+     */
+    function getOpposite() {
+        return this.oppositePole;
+    }
+
+
+    /**
      * returns the reverse polarity
      *
      * @param polarity {string} one of 'plus', 'minus'
@@ -169,6 +179,7 @@ Cell.prototype = function() {
         //mark,
         getOppositePoleCoordinates,
         setOpposite,
+        getOpposite,
         setNeighbors,
         getPosition,
         getValue
