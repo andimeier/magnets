@@ -1,6 +1,8 @@
 'use strict';
-let line = require('line');
-let cell = require('cell');
+let _ = require('lodash');
+
+let Line = require('./line');
+let Cell = require('./cell');
 
 let board;
 
@@ -13,6 +15,7 @@ let lines = {
     columns: []
 };
 let cells;
+let magnets;
 
 
 /**
@@ -76,7 +79,7 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
 
         // add cells for this row
         let rowCells = _.times(dimensions.x).map((column) => {
-            return row.getCellAt(column, rowIndex);
+            return getCellAt(column, rowIndex);
         });
         row.addCells(rowCells);
 
@@ -89,11 +92,11 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
 
         // add cells for this column
         let columnCells = _.times(dimensions.y).map((row) => {
-            return row.getCellAt(columnIndex, row);
+            return getCellAt(columnIndex, row);
         });
         column.addCells(columnCells);
 
-        column.setConstraints(columnsConstraints[columnIndex]);
+        column.setConstraints(columnConstraints[columnIndex]);
 
         lines.columns.push(column);
     });
@@ -107,17 +110,50 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
  * print the game board
  */
 function print() {
+    let lineHeight = 3;
 
     for (let y = 0; y < dimensions.y; y++) {
-        let line = '';
+        let lines = [
+            '',
+            '',
+            ''
+        ];
         for (let x = 0; x < dimensions.x; x++) {
-            let value = getValue(x, y);
-            if (value) {
-                // append next value
-                line = `${line}${value}`;
+            let cell = getCellAt(x, y);
+            let pos = cell.getPosition();
+            let v = cell.getValue();
+            if (!v) {
+                v = ' ';
+            }
+
+            // top line
+            switch (pos) {
+                case 'l':
+                    lines[0] = lines[0] + '+++';
+                    lines[1] = lines[1] + `+${v} `;
+                    lines[2] = lines[2] + '+++';
+                    break;
+                case 'r':
+                    lines[0] = lines[0] + '+++';
+                    lines[1] = lines[1] + ` ${v}+`;
+                    lines[2] = lines[2] + '+++';
+                    break;
+                case 't':
+                    lines[0] = lines[0] + '+++';
+                    lines[1] = lines[1] + `+${v}+`;
+                    lines[2] = lines[2] + '   ';
+                    break;
+                case 'b':
+                    lines[0] = lines[0] + '   ';
+                    lines[1] = lines[1] + `+${v}+`;
+                    lines[2] = lines[2] + '+++';
+                    break;
             }
         }
-        console.out(line);
+
+        lines.forEach((line) => {
+            console.log(line);
+        });
     }
 }
 
@@ -159,7 +195,39 @@ function getValue(x, y) {
  * @return {object} the cell on that position
  */
 function getCellAt(x, y) {
-    return cells[y * dimensionX + x];
+    return cells[y * dimensions.x + x];
+}
+
+
+/**
+ * solve board by brute force iteration
+ *
+ * @return {boolean} success flag: true if board has been solved, false if not or if there are more than
+ *   one solution (= illegal board)
+ */
+function solve() {
+
+    /*
+     * recursion: try all possible magnet positions and orientations
+     *
+     * @param level {number} the recursion depth = the magnet index to be permutated
+     * @return {number} success flag: true if a solution has been found (= stop criteria for
+     *   recursion), false if not
+     */
+    function recurse(level) {
+        /*
+         * try all three possible options for this magnet:
+         * * one orientation
+         * * opposite orientation
+         * * no magnet on this position
+         */
+
+
+        return true;
+    }
+
+
+    return recurse(0);
 }
 
 
@@ -167,5 +235,6 @@ module.exports = {
     init,
     print,
     getValue,
-    clear
+    clear,
+    solve
 };

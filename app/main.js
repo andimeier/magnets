@@ -24,4 +24,6 @@ let exampleBoard = {
 
 board.init(exampleBoard.dimX, exampleBoard.dimY, exampleBoard.cells, exampleBoard.rows, exampleBoard.cols);
 
+//board.solve();
+
 board.print();

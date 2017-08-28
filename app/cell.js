@@ -142,13 +142,37 @@ Cell.prototype = function() {
     }
 
 
+    /**
+     * defines the neighboring cells
+     *
+     * @return {string} one of 'l', 't', 'r', 'b' (standing for 'left', 'top', 'right', 'bottom')
+     */
+    function getPosition() {
+        return this.polePosition;
+    }
+
+
+    /**
+     * returns the value of the cell
+     *
+     * @returns {string} can be '+' or '-'
+     */
+    function getValue() {
+        return this.value;
+    }
+
+
     // public functions
     return {
         set,
         forbid,
-        mark,
+        //mark,
         getOppositePoleCoordinates,
         setOpposite,
-        setNeighbors
+        setNeighbors,
+        getPosition,
+        getValue
     };
 }();
+
+module.exports = Cell;

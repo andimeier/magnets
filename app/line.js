@@ -1,4 +1,5 @@
 'use strict';
+let _ = require('lodash');
 
 /**
  * constructor
@@ -76,3 +77,5 @@ Line.prototype = function () {
         check
     };
 }();
+
+module.exports = Line;
