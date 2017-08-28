@@ -33,6 +33,19 @@ Line.prototype = function () {
             'plus',
             'minus'
         ]);
+
+        console.log(`DEBUG constraints set to plus=${this.constraints.plus}, minus=${this.constraints.minus}`);
+    }
+
+
+    /**
+     * returns the constraints for a line
+     *
+     * @return {object} number of plus/minus poles in this line, null if not defined.
+     *   As an object in the form { plus, minus }
+     */
+    function getConstraints() {
+        return this.constraints;
     }
 
 
@@ -74,7 +87,8 @@ Line.prototype = function () {
     return {
         setConstraints,
         addCells,
-        check
+        check,
+        getConstraints
     };
 }();
 

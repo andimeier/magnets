@@ -9,16 +9,16 @@ let exampleBoard = {
     dimY: 4,
     cells: 'ttlrbblrtlrtblrb',
     rows: [
-        [2, 2],
-        [1, 1],
-        [1, 0],
-        [1, 2]
+        { plus: 2, minus: 2 },
+        { plus: 1, minus: 1 },
+        { plus: 1, minus: 0 },
+        { plus: 1, minus: 2 }
     ],
     cols: [
-        [1, 1],
-        [1, 2],
-        [2, 0],
-        [1, 2]
+        { plus: 1, minus: 1 },
+        { plus: 1, minus: 2 },
+        { plus: 2, minus: 0 },
+        { plus: 1, minus: 2 }
     ]
 };
 

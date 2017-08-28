@@ -54,6 +54,7 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
         for (let x = 0; x < dimensions.x; x++) {
             let cell = new Cell(x, y, layout.substr(cellIndex, 1));
             cells.push(cell);
+            cellIndex++;
         }
     }
 
@@ -83,6 +84,7 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
         });
         row.addCells(rowCells);
 
+        console.log(`rowconstraints = ${JSON.stringify(rowConstraints[rowIndex])}`);
         row.setConstraints(rowConstraints[rowIndex]);
 
         lines.rows.push(row);
@@ -110,14 +112,44 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
  * print the game board
  */
 function print() {
-    let lineHeight = 3;
+
 
     for (let y = 0; y < dimensions.y; y++) {
-        let lines = [
+        let line = '';
+
+        for (let x = 0; x < dimensions.x; x++) {
+            line = line + getCellAt(x, y).getPosition();
+        }
+        console.log(line);
+    }
+
+
+    console.log('+ -');
+    for (let y = 0; y < dimensions.y; y++) {
+        let subLines = [
             '',
             '',
             ''
         ];
+
+        // print row contraints
+        let constraints = lines.rows[y].getConstraints();
+        let con = {
+            plus: constraints.plus,
+            minus: constraints.minus
+        };
+        if (!_.isNumber(con.plus)) {
+            con.plus = ' ';
+        }
+        if (!_.isNumber(con.minus)) {
+            con.minus = ' ';
+        }
+
+        subLines[1] += `${con.plus} ${con.minus}: `;
+        subLines[0] += ' '.repeat(5);
+        subLines[2] += ' '.repeat(5);
+
+
         for (let x = 0; x < dimensions.x; x++) {
             let cell = getCellAt(x, y);
             let pos = cell.getPosition();
@@ -129,32 +161,63 @@ function print() {
             // top line
             switch (pos) {
                 case 'l':
-                    lines[0] = lines[0] + '+++';
-                    lines[1] = lines[1] + `+${v} `;
-                    lines[2] = lines[2] + '+++';
+                    subLines[0] += '+-+';
+                    subLines[1] += `|${v} `;
+                    subLines[2] += '+-+';
                     break;
                 case 'r':
-                    lines[0] = lines[0] + '+++';
-                    lines[1] = lines[1] + ` ${v}+`;
-                    lines[2] = lines[2] + '+++';
+                    subLines[0] += '+-+';
+                    subLines[1] += ` ${v}|`;
+                    subLines[2] += '+-+';
                     break;
                 case 't':
-                    lines[0] = lines[0] + '+++';
-                    lines[1] = lines[1] + `+${v}+`;
-                    lines[2] = lines[2] + '   ';
+                    subLines[0] += '+-+';
+                    subLines[1] += `|${v}|`;
+                    subLines[2] += '+ +';
                     break;
                 case 'b':
-                    lines[0] = lines[0] + '   ';
-                    lines[1] = lines[1] + `+${v}+`;
-                    lines[2] = lines[2] + '+++';
+                    subLines[0] += '+ +';
+                    subLines[1] += `|${v}|`;
+                    subLines[2] += '+-+';
                     break;
             }
         }
 
-        lines.forEach((line) => {
+        // terminate lines
+        subLines[0] += '+';
+        subLines[1] += '|';
+        subLines[2] += '+';
+
+
+        subLines.forEach((line) => {
             console.log(line);
         });
     }
+
+    // print column contraints
+    let subLines = [
+        '+' + ' '.repeat(5),
+        '-' + ' '.repeat(5)
+    ];
+    for (let x = 0; x < dimensions.x; x++) {
+        let constraints = lines.columns[x].getConstraints();
+        let con = {
+            plus: constraints.plus,
+            minus: constraints.minus
+        };
+        if (!_.isNumber(con.plus)) {
+            con.plus = ' ';
+        }
+        if (!_.isNumber(con.minus)) {
+            con.minus = ' ';
+        }
+
+        subLines[0] += `${con.plus}  `;
+        subLines[1] += `${con.minus}  `;
+    }
+    subLines.forEach((line) => {
+        console.log(line);
+    });
 }
 
 
