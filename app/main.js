@@ -7,21 +7,25 @@ let exampleBoard = {
     dimY: 4,
     cells: 'ttlrbblrtlrtblrb',
     rows: [
-        { plus: 2, minus: 2 },
-        { plus: 1, minus: 1 },
-        { plus: 1, minus: 0 },
-        { plus: 1, minus: 2 }
+        { '+': 2, '-': 2 },
+        { '+': 1, '-': 1 },
+        { '+': 1, '-': 0 },
+        { '+': 1, '-': 2 }
     ],
     cols: [
-        { plus: 1, minus: 1 },
-        { plus: 1, minus: 2 },
-        { plus: 2, minus: 0 },
-        { plus: 1, minus: 2 }
+        { '+': 1, '-': 1 },
+        { '+': 1, '-': 2 },
+        { '+': 2, '-': 0 },
+        { '+': 1, '-': 2 }
     ]
 };
 
 board.init(exampleBoard.dimX, exampleBoard.dimY, exampleBoard.cells, exampleBoard.rows, exampleBoard.cols);
 
-//board.solve();
+if (board.solve()) {
+    console.log('SOLVED!');
+} else {
+    console.log('... could not solve board');
+}
 
 board.print();

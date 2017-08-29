@@ -36,19 +36,35 @@ let Cell = function (_x, _y, polePosition) {
      * @type {Array}
      */
     this.neighbors = [];
+
+    /**
+     * the "lines" (row resp. column) which the cell belongs to
+     *
+     * @type {Array} an array of line objects
+     */
+    this.lines = [];
 };
 
 
 Cell.prototype = function() {
 
     /**
-     * sets the cell to 'minus' or 'plus'
+     * sets the cell to '+' or '-', or '.' (which would be the same as calling forbid())
      *
-     * @param _polarity {string} one of 'plus', 'minus'
+     * @param _polarity {string} one of '+', '-' or '.' (= forbid)
      * @param ignoreOtherPole {boolean} if set, the opposite pole will not be considered. If false, sets
      *   the opposite pole accordingly
      */
     function set(_polarity, ignoreOtherPole) {
+
+        if (!['+', '-', '.'].includes(_polarity)) {
+            throw new Error(`illegal polarity value for cell, must be +, - or ., but is: ${_polarity}`);
+        }
+
+        if (_polarity === '.') {
+            return this.forbid(ignoreOtherPole);
+        }
+
         this.polarity= _polarity;
 
         if (!ignoreOtherPole) {
@@ -128,14 +144,14 @@ Cell.prototype = function() {
     /**
      * returns the reverse polarity
      *
-     * @param polarity {string} one of 'plus', 'minus'
-     * @return {string} opposite polarity, e.g. 'minus' or null if neither 'plus' nor 'minus' was given
+     * @param polarity {string} one of '+', '-'
+     * @return {string} opposite polarity, e.g. '-' or null if neither '+' nor '-' was given
      */
     function reverse(polarity) {
-        if (polarity === 'plus') {
-            return 'minus';
-        } else if (polarity === 'minus') {
-            return 'plus';
+        if (polarity === '+') {
+            return '-';
+        } else if (polarity === '-') {
+            return '+';
         }
 
         return null;
@@ -168,7 +184,17 @@ Cell.prototype = function() {
      * @returns {string} can be '+' or '-'
      */
     function getValue() {
-        return this.value;
+        return this.polarity;
+    }
+
+
+    /**
+     * declares that the given line (row or column) contains this cell
+     *
+     * @param line {object} the line object which this cell belongs to
+     */
+    function registerLine(line) {
+        this.lines.push(line);
     }
 
 
@@ -182,7 +208,8 @@ Cell.prototype = function() {
         getOpposite,
         setNeighbors,
         getPosition,
-        getValue
+        getValue,
+        registerLine
     };
 }();
 

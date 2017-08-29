@@ -12,8 +12,8 @@ let Line = function (_length, _label) {
 
     this.length = _length;
     this.constraints = {
-        plus: null,
-        minus: null
+        '+': null,
+        '-': null
     };
     this.cells = [];
     this.label = _label;
@@ -30,11 +30,11 @@ Line.prototype = function () {
      */
     function setConstraints(constraints) {
         this.constraints = _.pick(constraints, [
-            'plus',
-            'minus'
+            '+',
+            '-'
         ]);
 
-        console.log(`DEBUG constraints set to plus=${this.constraints.plus}, minus=${this.constraints.minus}`);
+        console.log(`DEBUG constraints set to plus=${this.constraints['+']}, minus=${this.constraints['-']}`);
     }
 
 
@@ -56,6 +56,11 @@ Line.prototype = function () {
      */
     function addCells(cells) {
         this.cells.push(...cells);
+
+        // let each cell know its relation to this line
+        cells.forEach((cell) => {
+            cell.registerLine(this);
+        });
     }
 
 
@@ -66,11 +71,11 @@ Line.prototype = function () {
      */
     function check() {
 
-        ['plus', 'minus'].forEach((polarity) => {
+        ['+', '-'].forEach((polarity) => {
             if (this[polarity]) {
                 // count poles
                 let sum = this.cells.reduce((sum, cell) => {
-                    return sum + (cell.value === polarity ? 1 : 0);
+                    return sum + (cell.getValue() === polarity ? 1 : 0);
                 }, 0);
                 if (sum > this[polarity]) {
                     // TODO add to errors: 'too many ${polarity} values in line ${this.label}'

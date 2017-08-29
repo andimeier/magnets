@@ -12,7 +12,8 @@ let board;
 let dimensions = {};
 let lines = {
     rows: [],
-    columns: []
+    columns: [],
+    all: []
 };
 let cells;
 let magnets;
@@ -103,6 +104,7 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
 
         lines.columns.push(column);
     });
+    lines.all = [...lines.rows, ...lines.columns];
 
     // TODO set neighbors
     // cell.setNeighbors(neighbors);
@@ -127,7 +129,6 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
  */
 function print() {
 
-
     for (let y = 0; y < dimensions.y; y++) {
         let line = '';
 
@@ -149,8 +150,8 @@ function print() {
         // print row contraints
         let constraints = lines.rows[y].getConstraints();
         let con = {
-            plus: constraints.plus,
-            minus: constraints.minus
+            plus: constraints['+'],
+            minus: constraints['-']
         };
         if (!_.isNumber(con.plus)) {
             con.plus = ' ';
@@ -216,8 +217,8 @@ function print() {
     for (let x = 0; x < dimensions.x; x++) {
         let constraints = lines.columns[x].getConstraints();
         let con = {
-            plus: constraints.plus,
-            minus: constraints.minus
+            plus: constraints['+'],
+            minus: constraints['-']
         };
         if (!_.isNumber(con.plus)) {
             con.plus = ' ';
@@ -284,34 +285,54 @@ function getCellAt(x, y) {
  */
 function solve() {
 
+    magnets[0][0].set('+');
+    debugger;
+
+    print();
+    return false;
+
     /*
      * recursion: try all possible magnet positions and orientations
      *
-     * @param level {number} the recursion depth = the magnet index to be permutated
+     * @param level {number} the recursion depth = the magnet index to be permutated (tried)
      * @return {number} success flag: true if a solution has been found (= stop criteria for
      *   recursion), false if not
      */
     function recurse(level) {
+
+        // board completed already?
+        if (level === nrOfMagnets) {
+            // check solution
+            return isSolved();
+        }
+
         /*
          * try all three possible options for this magnet:
          * * one orientation
          * * opposite orientation
          * * no magnet on this position
          */
-        if (level === nrOfMagnets) {
-            // check solution
-            return isBoardSolved();
-        }
+        return ['+', '-', '.'].some((attempt) => {
+            magnets[level][0].set(attempt);
+            return recurse(level + 1);
+        });
 
-        if (recurse(level + 1)) {
-            return true;
-        }
-
-        return true;
     }
 
 
     return recurse(0);
+}
+
+
+/**
+ * check if board is solved successfully
+ *
+ * @return {boolean} success flag: true if board has been solved, false if not or if there are more than
+ *   one solution (= illegal board)
+ */
+function isSolved() {
+
+    return lines.all.every((line) => line.check());
 }
 
 
@@ -320,5 +341,6 @@ module.exports = {
     print,
     getValue,
     clear,
-    solve
+    solve,
+    isSolved
 };
