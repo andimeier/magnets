@@ -67,24 +67,36 @@ Line.prototype = function () {
     /**
      * checks the validity of the cells in the line (no limit exceeded)
      *
+     * @param strict {boolean} if true, number of poles must exactly match the constraints (check if
+     *   solved). If false, only check if the constraints are not exceeded
      * @return {boolean} true if all constraints are met, false if line is not valid
      */
-    function check() {
+    function check(strict) {
 
-        ['+', '-'].forEach((polarity) => {
-            if (this[polarity]) {
+        return ['+', '-'].every((polarity) => {
+            // if there exists a constraint for this polarity
+            if (this.constraints[polarity]) {
                 // count poles
-                let sum = this.cells.reduce((sum, cell) => {
-                    return sum + (cell.getValue() === polarity ? 1 : 0);
-                }, 0);
-                if (sum > this[polarity]) {
-                    // TODO add to errors: 'too many ${polarity} values in line ${this.label}'
-                    return false;
+                let sum = this.cells.filter((c) => c.getValue() === polarity).length;
+                //let sum = this.cells.reduce((sum, cell) => {
+                //    return sum + (cell.getValue() === polarity ? 1 : 0);
+                //}, 0);
+                if (strict) {
+                    if (sum !== this.constraints[polarity]) {
+                        return false;
+                    }
+                } else {
+                    if (sum > this.constraints[polarity]) {
+                        // TODO add to errors: 'too many ${polarity} values in line ${this.label}'
+                        return false;
+                    }
                 }
-            }
-        });
 
-        return true;
+            } else {
+                console.log('no constraint');
+            }
+            return true;
+        });
     }
 
 

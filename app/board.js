@@ -285,11 +285,11 @@ function getCellAt(x, y) {
  */
 function solve() {
 
-    magnets[0][0].set('+');
-    debugger;
-
-    print();
-    return false;
+    //magnets[0][0].set('+');
+    //debugger;
+    //
+    //print();
+    //return false;
 
     /*
      * recursion: try all possible magnet positions and orientations
@@ -303,6 +303,10 @@ function solve() {
         // board completed already?
         if (level === nrOfMagnets) {
             // check solution
+            if (isSolved()) {
+                isSolved();
+            }
+
             return isSolved();
         }
 
@@ -332,7 +336,7 @@ function solve() {
  */
 function isSolved() {
 
-    return lines.all.every((line) => line.check());
+    return lines.all.every((line) => line.check(true));
 }
 
 
