@@ -74,6 +74,35 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
         cell.setOpposite(getCellAt(oppositeCoordinates.x, oppositeCoordinates.y));
     });
 
+    // determine each cell's neighbors
+    cells.forEach((cell) => {
+        let neighbors = [];
+
+        let coords = cell.getCoordinates();
+
+        for (let x = coords.x - 1; x <= coords.x + 1; x++) {
+            for (let y = coords.y - 1; y <= coords.y + 1; y++) {
+                neighbors.push({
+                    x,
+                    y
+                });
+            }
+        }
+        neighbors = neighbors
+            .filter((neighbor) => neighbor.x >= 0 && neighbor.x < dimensions.x) // omit off-board cells
+            .filter((neighbor) => neighbor.y >= 0 && neighbor.y < dimensions.y) // omit off-board cells
+            .filter((neighbor) => neighbor.x != cell.x || neighbor.y != cell.y) // omit the cell itself
+            .map((neighbor) => {
+                let cell = getCellAt(neighbor.x, neighbor.y);
+                if (!cell) {
+                    cell = cell;
+                }
+                return cell;
+            });
+
+        cell.setNeighbors(neighbors);
+    });
+
     board = [];
 
     // initialize rows and columns
@@ -105,9 +134,6 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
         lines.columns.push(column);
     });
     lines.all = [...lines.rows, ...lines.columns];
-
-    // TODO set neighbors
-    // cell.setNeighbors(neighbors);
 
     /*
      * find out magnets by looking at the "l" and "t" orientated cells (which must be
@@ -317,7 +343,16 @@ function solve() {
          * * no magnet on this position
          */
         return ['+', '-', '.'].some((attempt) => {
-            magnets[level][0].set(attempt);
+            let cell;
+
+            cell = magnets[level][0];
+
+            // would this be a valid move?
+            if (!cell.allowedValues().includes(attempt)) {
+                return false;
+            }
+
+            cell.set(attempt);
             return recurse(level + 1);
         });
 
