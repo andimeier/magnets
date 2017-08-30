@@ -18,6 +18,9 @@ let Cell = function (_x, _y, polePosition) {
     this.y = _y;
     this.polePosition = polePosition;
 
+    // the cell's name, e.g. 'A1'
+    this.name = `${String.fromCharCode(65 + y)}${x + 1}`;
+
     /**
      * the polarity of the cell, can be:
      *
@@ -198,6 +201,16 @@ Cell.prototype = function() {
     }
 
 
+    /**
+     * returns the "name" of the cell
+     *
+     * @returns {string} the name of the cell, e.g. 'A1'
+     */
+    function getName() {
+        return this.name;
+    }
+
+
     // public functions
     return {
         set,
@@ -209,7 +222,8 @@ Cell.prototype = function() {
         setNeighbors,
         getPosition,
         getValue,
-        registerLine
+        registerLine,
+        getName
     };
 }();
 
