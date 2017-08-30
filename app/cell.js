@@ -1,4 +1,5 @@
 'use strict';
+let _ = require('lodash');
 
 /**
  * constructor
@@ -46,10 +47,17 @@ let Cell = function (_x, _y, polePosition) {
      * @type {Array} an array of line objects
      */
     this.lines = [];
+
+    /**
+     * list of allowed values for the cell
+     *
+     * @type {string[]}
+     */
+    this.allowed = ['+', '-', '.'];
 };
 
 
-Cell.prototype = function() {
+Cell.prototype = function () {
 
     /**
      * sets the cell to '+' or '-', or '.' (which would be the same as calling forbid())
@@ -68,10 +76,36 @@ Cell.prototype = function() {
             return this.forbid(ignoreOtherPole);
         }
 
-        this.polarity= _polarity;
+        this.polarity = _polarity;
+
+        // disallow this polarity for all adjacent cells
+        this.neighbors.forEach((neighbor) => {
+            neighbor.forget(_polarity);
+        });
 
         if (!ignoreOtherPole) {
             this.oppositePole.set(reverse(_polarity), true);
+        }
+    }
+
+
+    /**
+     * disallows a value for the cell. If there are no valid values left, the cell is set to "forbidden"
+     *
+     * @param polarity {string} the value to be disallowed
+     */
+    function forget(polarity) {
+        _.pull(this.allowed, polarity);
+
+        if (this.allowed.length === 1) {
+            // only one possibility left
+            let lastAllowed = this.allowed[0];
+
+            if (lastAllowed === '.') {
+                this.forbid();
+            } else {
+                this.set(lastAllowed);
+            }
         }
     }
 
@@ -202,9 +236,32 @@ Cell.prototype = function() {
 
 
     /**
-     * returns the "name" of the cell
+     * returns the grid coordinates of the cell
      *
-     * @returns {string} the name of the cell, e.g. 'A1'
+     * @return {object} coordinates object consisting of { x, y }
+     */
+    function getCoordinates() {
+        return {
+            x: this.x,
+            y: this.y
+        };
+    }
+
+
+    /**
+     * return the list of allowed values for a cell
+     *
+     * @return {array} list of allowed cell values, e.g. [ '+', '-' ]
+     */
+    function allowedValues() {
+        return this.allowed;
+    }
+
+
+    /**
+     * returns the cell's name
+     *
+     * @returns {string} the cell's name, e.g. 'A1'
      */
     function getName() {
         return this.name;
@@ -223,6 +280,9 @@ Cell.prototype = function() {
         getPosition,
         getValue,
         registerLine,
+        getCoordinates,
+        allowedValues,
+        forget,
         getName
     };
 }();
