@@ -1,5 +1,6 @@
 'use strict';
 let _ = require('lodash');
+let options = require('./options');
 
 /**
  * constructor
@@ -20,7 +21,7 @@ let Cell = function (_x, _y, polePosition) {
     this.polePosition = polePosition;
 
     // the cell's name, e.g. 'A1'
-    this.name = `${String.fromCharCode(65 + y)}${x + 1}`;
+    this.name = `${String.fromCharCode(65 + _y)}${_x + 1}`;
 
     /**
      * the polarity of the cell, can be:
@@ -78,10 +79,12 @@ Cell.prototype = function () {
 
         this.polarity = _polarity;
 
-        // disallow this polarity for all adjacent cells
-        this.neighbors.forEach((neighbor) => {
-            neighbor.forget(_polarity);
-        });
+        if (!options.bruteForce) {
+            // disallow this polarity for all adjacent cells
+            this.neighbors.forEach((neighbor) => {
+                neighbor.forget(_polarity);
+            });
+        }
 
         if (!ignoreOtherPole) {
             this.oppositePole.set(reverse(_polarity), true);

@@ -329,10 +329,6 @@ function solve() {
         // board completed already?
         if (level === nrOfMagnets) {
             // check solution
-            if (isSolved()) {
-                isSolved();
-            }
-
             return isSolved();
         }
 

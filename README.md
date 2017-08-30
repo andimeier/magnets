@@ -14,3 +14,7 @@ Your aim is to correctly place the magnets and blank dominoes such that all the 
 ## Solver
 
 This solver tries to solve the puzzle.
+
+## To do
+
+* check for non-unique solutions: don't stop on first solution, but try to find another solution. If such a second solution exists, the game is not a valid game.
