@@ -3,6 +3,7 @@ let _ = require('lodash');
 
 let Line = require('./line');
 let Cell = require('./cell');
+let options = require('./options');
 
 let board;
 
@@ -50,6 +51,9 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
     dimensions.x = _dimensionX;
     dimensions.y = _dimensionY;
 
+    // remove whitespace from layout string
+    layout = layout.replace(/\s/g, '');
+
     cells = [];
     let cellIndex = 0;
     for (let y = 0; y < dimensions.y; y++) {
@@ -80,18 +84,17 @@ function init(_dimensionX, _dimensionY, layout, rowConstraints, columnConstraint
 
         let coords = cell.getCoordinates();
 
-        for (let x = coords.x - 1; x <= coords.x + 1; x++) {
-            for (let y = coords.y - 1; y <= coords.y + 1; y++) {
-                neighbors.push({
-                    x,
-                    y
-                });
-            }
-        }
+        neighbors = [
+            [coords.x - 1, coords.y],
+            [coords.x + 1, coords.y],
+            [coords.x, coords.y - 1],
+            [coords.x, coords.y + 1]
+        ].map((neighbor) => ({ x: neighbor[0], y: neighbor[1] }));
+
         neighbors = neighbors
             .filter((neighbor) => neighbor.x >= 0 && neighbor.x < dimensions.x) // omit off-board cells
             .filter((neighbor) => neighbor.y >= 0 && neighbor.y < dimensions.y) // omit off-board cells
-            .filter((neighbor) => neighbor.x != cell.x || neighbor.y != cell.y) // omit the cell itself
+            .filter((neighbor) => neighbor.x!= cell.x || neighbor.y != cell.y) // omit the cell itself
             .map((neighbor) => {
                 let cell = getCellAt(neighbor.x, neighbor.y);
                 if (!cell) {
@@ -344,7 +347,11 @@ function solve() {
             cell = magnets[level][0];
 
             // would this be a valid move?
-            if (!cell.allowedValues().includes(attempt)) {
+            if (options.bruteForce) {
+                if (cell.hasNeighborWith(attempt)) {
+                    return false;
+                }
+            } else if (!cell.allowedValues().includes(attempt)) {
                 return false;
             }
 

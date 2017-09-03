@@ -7,7 +7,8 @@ let options = require('./options');
  *
  * @param _x
  * @param _y
- * @param polePosition {string} one of 'l', 't', 'r', 'b' (standing for 'left', 'top', 'right', 'bottom')
+ * @param polePosition {string} one of 'l', 't', 'r', 'b' (standing for 'left', 'top', 'right', 'bottom') or
+ *   '.' standing for "no part of any magnet" (empty placeholder cell on the game board)
  * @constructor
  */
 let Cell = function (_x, _y, polePosition) {
@@ -18,7 +19,13 @@ let Cell = function (_x, _y, polePosition) {
 
     this.x = _x;
     this.y = _y;
-    this.polePosition = polePosition;
+
+    if (polePosition !== '.') {
+        this.polePosition = polePosition;
+    } else {
+        // placeholder
+        this.forbidxxx(); // really? forbid? block?
+    }
 
     // the cell's name, e.g. 'A1'
     this.name = `${String.fromCharCode(65 + _y)}${_x + 1}`;
@@ -262,6 +269,16 @@ Cell.prototype = function () {
 
 
     /**
+     * return the list of allowed values for a cell
+     *
+     * @return {array} list of allowed cell values, e.g. [ '+', '-' ]
+     */
+    function hasNeighborWith(value) {
+        return this.neighbors.some((neighbor) => neighbor.getValue() === value);
+    }
+
+
+    /**
      * returns the cell's name
      *
      * @returns {string} the cell's name, e.g. 'A1'
@@ -284,6 +301,7 @@ Cell.prototype = function () {
         getValue,
         registerLine,
         getCoordinates,
+        hasNeighborWith,
         allowedValues,
         forget,
         getName

@@ -92,8 +92,6 @@ Line.prototype = function () {
                     }
                 }
 
-            } else {
-                console.log('no constraint');
             }
             return true;
         });

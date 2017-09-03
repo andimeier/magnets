@@ -34,7 +34,56 @@ let exampleBoard2 = {
     ]
 };
 
-let exampleBoard = exampleBoard1;
+// wird FALSCH geloest:
+let exampleBoard_36 = {
+    dimX: 6,
+    dimY: 6,
+    cells: 'lrlrtt tlrtbb bttbtt tbbtbb blrblr lrlrlrr',
+    rows: [
+        { '+': null, '-': 2 },
+        { '+': null, '-': 2 },
+        { '+': null, '-': null },
+        { '+': 3, '-': 3 },
+        { '+': 2, '-': null },
+        { '+': null, '-': null }
+    ],
+    cols: [
+        { '+': 3, '-': 1 },
+        { '+': null, '-': null },
+        { '+': null, '-': 2 },
+        { '+': null, '-': 3 },
+        { '+': 2, '-': null },
+        { '+': null, '-': null }
+    ]
+};
+
+let exampleBoard_64 = {
+    dimX: 8,
+    dimY: 8,
+    cells: 'lrlrlrlr tlrlrttt blrttbbb tttbbtlr bbblrbtt ttlrlrbb bbttlrlr lrbblrlr',
+    rows: [
+        { '+': null, '-': 3 },
+        { '+': null, '-': null },
+        { '+': 4, '-': 4 },
+        { '+': null, '-': null },
+        { '+': null, '-': 4 },
+        { '+': 3, '-': null },
+        { '+': 2, '-': null },
+        { '+': 4, '-': 3 }
+    ],
+    cols: [
+        { '+': null, '-': 4 },
+        { '+': null, '-': 3 },
+        { '+': 4, '-': 3 },
+        { '+': null, '-': null },
+        { '+': 3, '-': null },
+        { '+': null, '-': 3 },
+        { '+': 4, '-': null },
+        { '+': 2, '-': null }
+    ]
+};
+
+let exampleBoard = exampleBoard_36;
 
 board.init(exampleBoard.dimX, exampleBoard.dimY, exampleBoard.cells, exampleBoard.rows, exampleBoard.cols);
 
